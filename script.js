@@ -1,4 +1,3 @@
-
 const canvas = document.getElementById('wheelCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -21,22 +20,50 @@ const prizeColors = [
     "#A9A9A9", "#A9A9A9"
 ];
 
-// 70% chance to win a drink, 30% chance to get a consolation message
-const probabilityWeights = [
-    7, 7, 7, 7, 7, 7, 7, 3, 3, 3
-];
+const probabilityWeights = [7, 7, 7, 7, 7, 7, 7, 3, 3, 3];
 
 let startAngle = 0;
 let spinTimeout = null;
 
-// Calculate total weight
-const totalWeight = probabilityWeights.reduce((a, b) => a + b, 0);
+// Adjust font size and align text
+function drawText(ctx, text, centerX, centerY, angle, radius) {
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.rotate(angle);
+    ctx.font = "bold 16px Arial"; // Adjust font size here
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+
+    const words = text.split(' ');
+    let line = '';
+    let yOffset = -radius + 30; // Start drawing text slightly away from the center
+
+    words.forEach((word, index) => {
+        let testLine = line + word + ' ';
+        let metrics = ctx.measureText(testLine);
+        let testWidth = metrics.width;
+        if (testWidth > 150) { // Adjust maximum text width
+            ctx.fillText(line, 0, yOffset);
+            line = word + ' ';
+            yOffset += 20; // Line height
+        } else {
+            line = testLine;
+        }
+        if (index === words.length - 1) {
+            ctx.fillText(line, 0, yOffset);
+        }
+    });
+
+    ctx.restore();
+}
 
 // Draw the wheel
 function drawWheel() {
     const arc = Math.PI * 2 / prizes.length;
     for (let i = 0; i < prizes.length; i++) {
         const angle = startAngle + i * arc;
+
+        // Draw section
         ctx.fillStyle = prizeColors[i % prizeColors.length];
         ctx.beginPath();
         ctx.moveTo(250, 250);
@@ -44,20 +71,14 @@ function drawWheel() {
         ctx.lineTo(250, 250);
         ctx.fill();
 
-        ctx.save();
-        ctx.fillStyle = "white";
-        ctx.translate(
-            250 + Math.cos(angle + arc / 2) * 150,
-            250 + Math.sin(angle + arc / 2) * 150
-        );
-        ctx.rotate(angle + arc / 2);
-        ctx.fillText(prizes[i], -30, 10);
-        ctx.restore();
+        // Draw text
+        drawText(ctx, prizes[i], 250, 250, angle + arc / 2, 200);
     }
 }
 
 // Weighted random selection
 function getRandomPrize() {
+    const totalWeight = probabilityWeights.reduce((a, b) => a + b, 0);
     const random = Math.random() * totalWeight;
     let cumulativeWeight = 0;
     for (let i = 0; i < probabilityWeights.length; i++) {
