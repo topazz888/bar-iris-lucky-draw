@@ -30,9 +30,9 @@ function drawText(ctx, text, centerX, centerY, angle, radius) {
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.rotate(angle);
-    ctx.font = "bold 16px Arial"; // Adjust font size here
-    ctx.textAlign = "center";
-    ctx.fillStyle = "white";
+    ctx.font = "bold 26px Arial"; // Adjust font size here
+    ctx.textAlign = "left";
+    ctx.fillStyle = "black";
 
     const words = text.split(' ');
     let line = '';
