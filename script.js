@@ -36,7 +36,7 @@ function drawText(ctx, text, centerX, centerY, angle, radius) {
 
     const words = text.split(' ');
     let line = '';
-    let yOffset = -radius + 30; // Start drawing text slightly away from the center
+    let yOffset = -radius + 20; // Start drawing text slightly away from the center
 
     words.forEach((word, index) => {
         let testLine = line + word + ' ';
